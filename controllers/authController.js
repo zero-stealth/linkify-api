@@ -10,16 +10,12 @@ const generateToken = (id) => {
   });
 };
 
-const handleErrors = (res, status, message) => {
-  res.status(status);
-  throw new Error(message);
-};
 
 const register = asyncHandler(async (req, res) => {
   const { email, password, isAdmin } = req.body;
 
   if (!email || !password) {
-    handleErrors(res, 400, 'Please enter all the required fields');
+    res.status(400).json({ error: "Please enter all the required fields" });
     return;
   }
 
@@ -27,7 +23,8 @@ const register = asyncHandler(async (req, res) => {
     const userExists = await User.findOne({ email });
 
     if (userExists) {
-      handleErrors(res, 400, 'User already exists!');
+      res.status(400).json({ error: "User already exists!" });
+
       return;
     }
 
@@ -48,11 +45,13 @@ const register = asyncHandler(async (req, res) => {
         token: generateToken(newUser._id),
       });
     } else {
-      handleErrors(res, 400, 'Invalid credentials');
+      res.status(400).json({ error: "Invalid credentials" });
+
     }
   } catch (error) {
     console.error(error);
-    handleErrors(res, 500, 'Server error');
+    res.status(500).json({ error: "Server error" });
+
   }
 });
 ;
@@ -63,7 +62,8 @@ const login = asyncHandler(async (req, res) => {
   const { email, password } = req.body;
 
   if (!email || !password) {
-    handleErrors(res, 400, 'Please enter all the required fields');
+    res.status(400).json({ error: "Please enter all the required fields" });
+
   }
 
   const user = await User.findOne({ email });
@@ -76,7 +76,8 @@ const login = asyncHandler(async (req, res) => {
       token: generateToken(user._id),
     });
   } else {
-    handleErrors(res, 400, 'The credentials you entered are invalid');
+    res.status(400).json({ error: "The credentials you entered are invalid" });
+
   }
 });
 
@@ -84,7 +85,9 @@ const updateUser = asyncHandler(async (req, res) => {
   const user = await User.findById(req.params.id);
 
   if (!user) {
-    handleErrors(res, 404, 'User does not exist');
+    res.status(400).json({ error: "User does not exist" });
+    
+
   } else {
     const updatedUser = await User.findByIdAndUpdate(req.params.id, req.body, {
       new: true,
@@ -99,7 +102,8 @@ const reset = asyncHandler(async (req, res) => {
   const user = await User.findOne({ email });
 
   if (!user) {
-    handleErrors(res, 404, 'User does not exist');
+    res.status(404).json({ error: "User does not exist" });
+
   }
 
   const resetCode = generateResetCode();
@@ -119,7 +123,8 @@ const setPassword = asyncHandler(async (req, res) => {
   const user = await User.findOne({ email, resetCode });
 
   if (!user) {
-    handleErrors(res, 400, 'Invalid reset code or email');
+  res.status(400).json({ message: 'Invalid reset code or email' });
+
   }
 
 
@@ -127,7 +132,7 @@ const setPassword = asyncHandler(async (req, res) => {
   const hashedPassword = await bcrypt.hash(password, salt);
 
   user.password = hashedPassword;
-  user.resetCode = null; 
+  user.resetCode = null;
   await user.save();
 
   res.status(200).json({ message: 'Password reset successfully' });

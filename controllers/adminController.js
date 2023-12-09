@@ -112,6 +112,22 @@ const updategroupLink = async (req, res) => {
   }
 };
 
+
+const getgroupLinks = async (req, res) => {
+  try {
+    const groupLinks = await Admin.find();
+
+    if (groupLinks.length === 0) {
+      return res.status(404).json({ message: "No group links found" });
+    } else {
+      res.status(200).json(groupLinks);
+    }
+  } catch (err) {
+    console.error(err);
+    res.status(500).json({ error: "An error occurred while fetching group links" });
+  }
+};
+
 const getgroupLink = async (req, res) => {
   try {
     const groupLink = await Admin.findById(req.params.id);
@@ -124,6 +140,7 @@ const getgroupLink = async (req, res) => {
     console.log(err);
   }
 };
+
 
 const getgroupLinkCategory = async (req, res) => {
   const groupLinks = await Admin.find({
@@ -155,6 +172,7 @@ module.exports = {
   creategroupLink,
   updategroupLink,
   getgroupLink,
+  getgroupLinks,
   getgroupLinkCategory,
   deletegroupLink,
 };

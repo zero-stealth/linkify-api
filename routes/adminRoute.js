@@ -7,7 +7,6 @@ const {
   getgroupLink,
   getgroupLinks,
   updategroupLink,
-  getgroupLinkCategory,
   deletegroupLink,
 } = require('../controllers/adminController');
 

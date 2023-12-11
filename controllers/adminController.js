@@ -2,17 +2,18 @@ const Admin = require("../models/Admin");
 const multer = require("multer");
 const cloudinary = require("cloudinary").v2;
 
-// Multer configuration
 const storage = multer.diskStorage({
   destination: function (req, file, cb) {
-    cb(null, 'uploads/');
+    const uploadPath = 'uploads/';
+    require('fs').mkdir(uploadPath, { recursive: true }, (err) => cb(err, uploadPath));
   },
   filename: function (req, file, cb) {
     cb(null, file.originalname);
   },
 });
 
-const upload = multer({ storage: storage });
+const upload = multer({ storage });
+
 
 cloudinary.config({
   cloud_name: process.env.CLOUDNAME,

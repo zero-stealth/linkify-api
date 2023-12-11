@@ -11,17 +11,17 @@ const {
   deletegroupLink,
 } = require('../controllers/adminController');
 
-// Multer configuration
 const storage = multer.diskStorage({
   destination: function (req, file, cb) {
-    cb(null, 'uploads/');
+    const uploadPath = 'uploads/';
+    require('fs').mkdir(uploadPath, { recursive: true }, (err) => cb(err, uploadPath));
   },
   filename: function (req, file, cb) {
     cb(null, file.originalname);
   },
 });
 
-const upload = multer({ storage: storage });
+const upload = multer({ storage });
 
 router.route('/links')
   .get(getgroupLinks)

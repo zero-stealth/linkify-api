@@ -31,8 +31,8 @@ router.route('/links')
     creategroupLink
   );
 
-  router.route('/links/:country')
-  .get(getgroupLinkCountry)
+router.route('/links/:country')
+  .get(getgroupLinkCountry);
 
 router.route('/links/:id')
   .get(getgroupLink)
@@ -42,6 +42,5 @@ router.route('/links/:id')
     updategroupLink
   )
   .delete(protect, deletegroupLink);
-
 
 module.exports = router;

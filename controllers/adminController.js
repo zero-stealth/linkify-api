@@ -7,11 +7,11 @@ const storage = multer.diskStorage({
     cb(null, "uploads/");
     console.log(file);
   },
-  fi: function (req, file, cb) {
-    cb(null, file.origin);
+  filename: function (req, file, cb) {
+    const uniqueSuffix = Date.now() + "-" + Math.round(Math.random() * 1e9);
+    cb(null, uniqueSuffix + "-" + file.originalname);
   },
 });
-
 const upload = multer({ storage });
 
 cloudinary.config({
@@ -72,35 +72,27 @@ const creategroupLink = async (req, res) => {
 
 
 const updategroupLink = async (req, res) => {
-  const groupLink = await Admin.findById(req.params.id);
+  try {
+    const groupLink = await Admin.findById(req.params.id);
 
-  if (!groupLink) {
-    return res
-      .status(404)
-      .json({ message: " group link does not exist" });
-  } else {
-    const {
-      title, description, link, country
-    } = req.body;
+    if (!groupLink) {
+      return res.status(404).json({ message: "Group link does not exist" });
+    }
+
+    const { title, description, link, country } = req.body;
+    let logo = groupLink.logo;
 
     try {
-      let logo = groupLink.logo;
-
       if (req.file) {
-        const result = await cloudinary.uploader.upload(
-          req.file.path,
-          {
-            crop: "scale",
-          }
-        );
+        const result = await cloudinary.uploader.upload(req.file.path, {
+          crop: "scale",
+        });
         logo = result.secure_url;
       }
 
       const updatedgroupLink = await Admin.findByIdAndUpdate(
         req.params.id,
-        {
-          title, description,  link, country
-        },
+        { title, description, link, country, logo },
         { new: true }
       );
 
@@ -109,8 +101,11 @@ const updategroupLink = async (req, res) => {
       console.error(error);
       res
         .status(500)
-        .json({ error: "An error occurred while updating  group link" });
+        .json({ error: "An error occurred while updating group link image" });
     }
+  } catch (error) {
+    console.error(error);
+    res.status(500).json({ error: "An error occurred while updating group link" });
   }
 };
 

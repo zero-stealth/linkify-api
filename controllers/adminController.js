@@ -5,13 +5,13 @@ const cloudinary = require("cloudinary").v2;
 const storage = multer.diskStorage({
   destination: function (req, file, cb) {
     cb(null, "uploads/");
-    console.log(file);
   },
   filename: function (req, file, cb) {
     const uniqueSuffix = Date.now() + "-" + Math.round(Math.random() * 1e9);
     cb(null, uniqueSuffix + "-" + file.originalname);
   },
 });
+
 const upload = multer({ storage });
 
 cloudinary.config({
@@ -129,12 +129,13 @@ const getgroupLink = async (req, res) => {
   try {
     const groupLink = await Admin.findById(req.params.id);
     if (!groupLink) {
-      return res.status(404).json({ message: "This  group link does not exist" });
+      return res.status(404).json({ message: "This group link does not exist" });
     } else {
       res.status(200).json(groupLink);
     }
   } catch (err) {
-    console.log(err);
+    console.error(err);
+    res.status(500).json({ error: "An error occurred while fetching group link" });
   }
 };
 
@@ -172,4 +173,5 @@ module.exports = {
   getgroupLinks,
   getgroupLinkCountry,
   deletegroupLink,
+
 };

@@ -3,11 +3,11 @@ const router = express.Router();
 const multer = require('multer');
 const { protect } = require('../middleware/authMiddleware');
 const {
-  getgroupLinkCountry,
   creategroupLink,
+  updategroupLink,
   getgroupLink,
   getgroupLinks,
-  updategroupLink,
+  getgroupLinkCountry,
   deletegroupLink,
 } = require('../controllers/adminController');
 

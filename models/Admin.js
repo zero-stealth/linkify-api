@@ -12,6 +12,9 @@ const adminSchema = new mongoose.Schema(
     description: {
       type: String,
     },
+    country: {
+      type: String,
+    },
     logo: {
       type: String,
       required: true,

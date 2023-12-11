@@ -36,7 +36,7 @@ const handleImageUpload = async (imageFile) => {
 
 const creategroupLink = async (req, res) => {
   const {
-    title, description, link
+    title, description, link, country
   } = req.body;
 
   const logo = req.file; 
@@ -50,6 +50,7 @@ const creategroupLink = async (req, res) => {
     const logoUrl = await handleImageUpload(logo);
     const groupLink = await Admin.create({
       title,
+      country,
       description,
       link,
       logo: logoUrl,
@@ -58,6 +59,7 @@ const creategroupLink = async (req, res) => {
     res.status(201).json({
       _id: groupLink._id,
       title: groupLink.title,
+      country: groupLink.country,
       description: groupLink.description,
       link: groupLink.link,
       logo: groupLink.logo,
@@ -78,7 +80,7 @@ const updategroupLink = async (req, res) => {
       .json({ message: " group link does not exist" });
   } else {
     const {
-      title, description, link
+      title, description, link, country
     } = req.body;
 
     try {
@@ -97,7 +99,7 @@ const updategroupLink = async (req, res) => {
       const updatedgroupLink = await Admin.findByIdAndUpdate(
         req.params.id,
         {
-          title, description,  link
+          title, description,  link, country
         },
         { new: true }
       );
@@ -142,9 +144,9 @@ const getgroupLink = async (req, res) => {
 };
 
 
-const getgroupLinkCategory = async (req, res) => {
+const getgroupLinkCountry = async (req, res) => {
   const groupLinks = await Admin.find({
-    category: decodeURIComponent(req.params.value),
+    country: decodeURIComponent(req.params.value),
   });
   if (!groupLinks) {
     return res.status(404).json({ message: " group link does not exist" });
@@ -173,6 +175,6 @@ module.exports = {
   updategroupLink,
   getgroupLink,
   getgroupLinks,
-  getgroupLinkCategory,
+  getgroupLinkCountry,
   deletegroupLink,
 };

@@ -3,6 +3,7 @@ const router = express.Router();
 const multer = require('multer');
 const { protect } = require('../middleware/authMiddleware');
 const {
+  getgroupLinkCountry,
   creategroupLink,
   getgroupLink,
   getgroupLinks,
@@ -29,6 +30,9 @@ router.route('/links')
     upload.single('logo'),
     creategroupLink
   );
+
+  router.route('/links/:country')
+  .get(getgroupLinkCountry)
 
 router.route('/links/:id')
   .get(getgroupLink)
